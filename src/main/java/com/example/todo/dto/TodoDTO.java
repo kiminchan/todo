@@ -24,6 +24,7 @@ public class TodoDTO {
 	}
 	
 	public static TodoEntity toEntity(final TodoDTO dto) {
+		// lombok을 쓰게되면 한줄로 끝난다.
 		return TodoEntity.builder()
 				.id(dto.getId())
 				.title(dto.getTitle())
