@@ -1,6 +1,5 @@
 package com.example.todo.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -42,7 +41,7 @@ public class TodoController {
 			
 			// service.create를 통해 repository에 entity를 저장 
 			// 이떄 넘어오는 값이 없을수도 있으므로 List가 아닌 Optional로 한다 
-			Optional<TodoEntity> entities = service.create(entity);
+			List<TodoEntity> entities = service.create(entity);
 			log.info("Log : service.create ok!");
 			
 			// entities를 dtos로 스트림 변환 
@@ -76,7 +75,7 @@ public class TodoController {
 			TodoEntity entity = TodoDTO.toEntity(dto);
 			entity.setUserId("temporary-user");
 			
-			Optional<TodoEntity> entities = service.update(entity);
+			List<TodoEntity> entities = service.update(entity);
 			
 			List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 			
@@ -97,7 +96,7 @@ public class TodoController {
 			TodoEntity entity = TodoDTO.toEntity(dto);
 			entity.setUserId("temporary-user");
 			
-			Optional<TodoEntity> entities = service.updateTodo(entity);
+			List<TodoEntity> entities = service.updateTodo(entity);
 			
 			List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
 			
@@ -113,18 +112,16 @@ public class TodoController {
 	@DeleteMapping
 	public ResponseEntity<?> delete(@RequestBody TodoDTO dto){
 		try{
-			List<String> message = new ArrayList<>();
-			
-			String msg = service.delete(dto.getId());
-			message.add(msg);
-			ResponseDTO<String> response = ResponseDTO.<String>builder().data(message).build();
+			TodoEntity entity = TodoDTO.toEntity(dto);
+			List<TodoEntity> entities = service.delete(entity);
+			List<TodoDTO> dtos = entities.stream().map(TodoDTO::new).collect(Collectors.toList());
+			ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().data(dtos).build();
 			return ResponseEntity.ok().body(response);
 		} catch(Exception e) {
 			String error = e.getMessage();
 			ResponseDTO<TodoDTO> response = ResponseDTO.<TodoDTO>builder().error(error).build();
 			return ResponseEntity.badRequest().body(response);
 		}
-	}
-	
+	}	
 	
 }
