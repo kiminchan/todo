@@ -18,32 +18,29 @@ import lombok.extern.slf4j.Slf4j;
 public class TokenProvider {
 	private static final String SECRET_KEY ="NMA8JPctFuna59f5";
 	
-	public String create(UserEntity userEntity) {
-		
-		//유효기간이 지나면 다시 로그
+	public String create(UserEntity userEntity){
 		Date expireDate = Date.from(
-					Instant.now()
-					.plus(1,ChronoUnit.DAYS));
-				
-					
-				// 3part 
+				Instant.now()
+				.plus(1,ChronoUnit.DAYS));
+		
 		return Jwts.builder()
-					.signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-					.setSubject(userEntity.getId())
-					.setIssuer("todo app")
-					.setIssuedAt(new Date())
-					.setExpiration(expireDate)
-					.compact();
-	
+				.signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+				.setSubject(userEntity.getId())
+				.setIssuer("todo app")
+				.setIssuedAt(new Date())
+				.setExpiration(expireDate)
+				.compact();
+		
 	}
 	
-	// Jwt parser을 통해서 토큰을 파싱 (맞는지 안맞는지)
-	public String validateAndGetUserId(String token) {
+	public String validateAndGetUserId(String token){
 		Claims claims = Jwts.parser()
 				.setSigningKey(SECRET_KEY)
 				.parseClaimsJws(token)
 				.getBody();
-		return claims.getSubject();	
+		
+		return claims.getSubject();
+		
 	}
-	
+
 }
